@@ -16,7 +16,7 @@ except Exception as e:
     print("GPIO UNAVAILABLE ({})".format(e))
     config.GPIO_AVAILABLE = False
 
-from pypboy.core import Pypboy
+from pypboy import core
 
 try:
     pygame.mixer.init(44100, -16, 2, 2048)
