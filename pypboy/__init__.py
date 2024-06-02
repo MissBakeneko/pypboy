@@ -1,7 +1,7 @@
 import pygame
-from ... import game
-from ... import config
-import .ui
+import game
+import config
+import ui
 
 if config.GPIO_AVAILABLE:
     import RPi.GPIO as GPIO
