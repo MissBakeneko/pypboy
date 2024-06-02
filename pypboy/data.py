@@ -31,9 +31,6 @@ class Maps(object):
 		return value
 
 	def fetch_grid(self, coords):
-		# lat = self.float_floor_to_precision(coords[0], self.SIG_PLACES)
-		# lng = self.float_floor_to_precision(coords[1], self.SIG_PLACES)
-		# print lat, lng
 		lat = coords[0]
 		lng = coords[1]
 
@@ -57,12 +54,12 @@ class Maps(object):
 						bounds[2],
 						bounds[3]
 				)
-		print "[Fetching maps... (%f, %f) to (%f, %f)]" % (
+		print("[Fetching maps... (%f, %f) to (%f, %f)]" % (
 						bounds[0],
 						bounds[1],
 						bounds[2],
 						bounds[3]
-				)
+				))
 		while True:
 			try:
 				response = requests.get(url)
@@ -88,7 +85,7 @@ class Maps(object):
 							#	   for t2 in node['tag']:
 							#			   if t2["@k"] == "addr:street":
 							#					   self.tags.append((float(node['@lat']), float(node['@lon']),tag["@v"]+" "+t2["@v"]))
-						except Exception, e:
+						except Exception as e:
 							pass
 
 			for way in osm_dict['osm']['way']:
@@ -97,8 +94,8 @@ class Maps(object):
 					node = self.nodes[node_id['@ref']]
 					waypoints.append((float(node['@lat']), float(node['@lon'])))
 				self.ways.append(waypoints)
-		except Exception, e:
-			print e
+		except Exception as e:
+			print(e)
 			#print response.text
 
 	def fetch_by_coordinate(self, coords, range):
@@ -160,110 +157,4 @@ class SoundSpectrum:
 	""" 
 
 	left = None 
-	right = None 
-	
-	def __init__(self, filename, force_mono=False): 
-		""" 
-		Create a new SoundSpectrum instance given the filename of 
-		a sound file pygame can read. If the sound is stereo, two 
-		spectra are available. Optionally mono can be forced. 
-		""" 
-		# Get playback frequency 
-		nu_play, format, stereo = pygame.mixer.get_init() 
-		self.nu_play = 1./nu_play 
-		self.format = format 
-		self.stereo = stereo 
-
-		# Load sound and convert to array(s) 
-		sound = pygame.mixer.Sound(filename)
-		a = pygame.sndarray.array(sound) 
-		a = numpy.array(a) 
-		if stereo: 
-			if force_mono: 
-				self.stereo = 0 
-				self.left = (a[:,0] + a[:,1])*0.5 
-			else: 
-				self.left = a[:,0] 
-				self.right = a[:,1] 
-		else: 
-			self.left = a 
-
-	def get(self, data, start, stop): 
-		""" 
-		Return spectrum of given data, between start and stop 
-		time in seconds. 
-		""" 
-		duration = stop-start 
-		# Filter data 
-		start = int(start/self.nu_play) 
-		stop = int(stop/self.nu_play) 
-		N = stop - start 
-		data = data[start:stop] 
-
-		# Get frequencies 
-		frequency = numpy.arange(N/2)/duration 
-
-		# Calculate spectrum 
-		spectrum = fft(data)[1:1+N/2] 
-		power = (spectrum).real 
-
-		return frequency, power 
-
-	def get_left(self, start, stop): 
-		""" 
-		Return spectrum of the left stereo channel between 
-		start and stop times in seconds. 
-		""" 
-		return self.get(self.left, start, stop) 
-
-	def get_right(self, start, stop): 
-		""" 
-		Return spectrum of the left stereo channel between 
-		start and stop times in seconds. 
-		""" 
-		return self.get(self.right, start, stop) 
-
-	def get_mono(self, start, stop): 
-		""" 
-		Return mono spectrum between start and stop times in seconds. 
-		Note: this only works if sound was loaded as mono or mono 
-		was forced. 
-		""" 
-		return self.get(self.left, start, stop) 
-
-class LogSpectrum(SoundSpectrum): 
-	""" 
-	A SoundSpectrum where the spectrum is divided into 
-	logarithmic bins and the logarithm of the power is 
-	returned. 
-	""" 
-
-	def __init__(self, filename, force_mono=False, bins=20, start=1e2, stop=1e4): 
-		""" 
-		Create a new LogSpectrum instance given the filename of 
-		a sound file pygame can read. If the sound is stereo, two 
-		spectra are available. Optionally mono can be forced. 
-		The number of spectral bins as well as the frequency range 
-		can be specified. 
-		""" 
-		SoundSpectrum.__init__(self, filename, force_mono=force_mono) 
-		start = log10(start) 
-		stop = log10(stop) 
-		step = (stop - start)/bins 
-		self.bins = 10**numpy.arange(start, stop+step, step) 
-
-	def get(self, data, start, stop): 
-		""" 
-		Return spectrum of given data, between start and stop 
-		time in seconds. Spectrum is given as the log of the 
-		power in logatithmically equally sized bins. 
-		""" 
-		f, p = SoundSpectrum.get(self, data, start, stop) 
-		bins = self.bins 
-		length = len(bins) 
-		result = numpy.zeros(length) 
-		ind = numpy.searchsorted(bins, f) 
-		for i,j in zip(ind, p): 
-			if i<length: 
-				result[i] += j 
-		return bins, result 
+	right
